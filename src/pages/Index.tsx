@@ -12,7 +12,7 @@ const Index = () => {
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${heroImage})` }}
+          style={{ backgroundImage: 'url(https://unsplash.com/photos/ajZibDGpPew/download?force=true&w=1920)' }}
         >
           <div className="absolute inset-0 bg-black/40"></div>
         </div>
@@ -76,7 +76,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Why This Matters Section */}
+      {/* Why This Matters Section (updated UI to single-box card style) */}
       <section className="py-20 bg-gradient-field">
         <div className="container mx-auto max-w-6xl px-4">
           <div className="text-center mb-16">
@@ -89,41 +89,41 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center p-8 border-0 shadow-soft">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="h-8 w-8 text-primary-foreground" />
-                </div>
-                <h3 className="text-xl font-semibold mb-4">Increase Productivity</h3>
-                <p className="text-muted-foreground">
+            {/* Card 1 */}
+            <div className="relative rounded-2xl border border-border bg-card p-8 shadow-soft">
+              <div className="absolute -top-6 left-6 w-12 h-12 rounded-full bg-gradient-primary shadow-md" />
+              <div className="mt-4">
+                <h3 className="text-2xl font-semibold text-foreground mb-3">Increase Productivity</h3>
+                <p className="text-muted-foreground mb-4">
                   Use AI-powered insights to optimize planting schedules, irrigation, and harvesting times
                 </p>
-              </CardContent>
-            </Card>
+                <button className="underline text-foreground/90">Learn more</button>
+              </div>
+            </div>
 
-            <Card className="text-center p-8 border-0 shadow-soft">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-gradient-earth rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="h-8 w-8 text-foreground" />
-                </div>
-                <h3 className="text-xl font-semibold mb-4">Reduce Risks</h3>
-                <p className="text-muted-foreground">
+            {/* Card 2 */}
+            <div className="relative rounded-2xl border border-border bg-card p-8 shadow-soft">
+              <div className="absolute -top-6 left-6 w-12 h-12 rounded-full bg-gradient-earth shadow-md" />
+              <div className="mt-4">
+                <h3 className="text-2xl font-semibold text-foreground mb-3">Reduce Risks</h3>
+                <p className="text-muted-foreground mb-4">
                   Get early weather alerts and crop disease predictions to protect your investments
                 </p>
-              </CardContent>
-            </Card>
+                <button className="underline text-foreground/90">Learn more</button>
+              </div>
+            </div>
 
-            <Card className="text-center p-8 border-0 shadow-soft">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-8 w-8 text-success-foreground" />
-                </div>
-                <h3 className="text-xl font-semibold mb-4">Community Support</h3>
-                <p className="text-muted-foreground">
+            {/* Card 3 */}
+            <div className="relative rounded-2xl border border-border bg-card p-8 shadow-soft">
+              <div className="absolute -top-6 left-6 w-12 h-12 rounded-full bg-success shadow-md" />
+              <div className="mt-4">
+                <h3 className="text-2xl font-semibold text-foreground mb-3">Community Support</h3>
+                <p className="text-muted-foreground mb-4">
                   Connect with fellow farmers and access expert advice in your local language
                 </p>
-              </CardContent>
-            </Card>
+                <button className="underline text-foreground/90">Learn more</button>
+              </div>
+            </div>
           </div>
         </div>
       </section>

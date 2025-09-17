@@ -11,6 +11,8 @@ interface WeatherData {
   windSpeed: number;
   visibility: number;
   icon: string;
+  feelsLike?: number;
+  pressure?: number;
 }
 
 interface ForecastDay {
@@ -20,6 +22,8 @@ interface ForecastDay {
   condition: string;
   icon: string;
   humidity: number;
+  date: string;
+  description: string;
 }
 
 const Weather = () => {
@@ -33,15 +37,13 @@ const Weather = () => {
     icon: "partly-cloudy"
   });
 
-  const [forecast, setForecast] = useState<ForecastDay[]>([
-    { day: "Today", high: 30, low: 24, condition: "Partly Cloudy", icon: "partly-cloudy", humidity: 75 },
-    { day: "Tomorrow", high: 32, low: 26, condition: "Sunny", icon: "sunny", humidity: 68 },
-    { day: "Wednesday", high: 29, low: 23, condition: "Rainy", icon: "rainy", humidity: 85 },
-    { day: "Thursday", high: 31, low: 25, condition: "Cloudy", icon: "cloudy", humidity: 72 },
-    { day: "Friday", high: 33, low: 27, condition: "Sunny", icon: "sunny", humidity: 65 },
-    { day: "Saturday", high: 28, low: 22, condition: "Heavy Rain", icon: "heavy-rain", humidity: 90 },
-    { day: "Sunday", high: 30, low: 24, condition: "Partly Cloudy", icon: "partly-cloudy", humidity: 78 }
-  ]);
+  const [forecast, setForecast] = useState<ForecastDay[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // OpenWeatherMap API configuration
+  const API_KEY = process.env.REACT_APP_OPENWEATHER_API_KEY || "YOUR_API_KEY_HERE";
+  const CITY = "Bhubaneswar,IN"; // Odisha, India
 
   const [alerts] = useState([
     {
@@ -56,7 +58,21 @@ const Weather = () => {
     }
   ]);
 
-  const getWeatherIcon = (condition: string) => {
+  // Convert OpenWeatherMap icon code to our icon system
+  const getWeatherIcon = (iconCode: string) => {
+    const iconMap: { [key: string]: string } = {
+      "01d": "sunny", "01n": "sunny",
+      "02d": "partly-cloudy", "02n": "partly-cloudy",
+      "03d": "cloudy", "03n": "cloudy", "04d": "cloudy", "04n": "cloudy",
+      "09d": "rainy", "09n": "rainy", "10d": "rainy", "10n": "rainy",
+      "11d": "heavy-rain", "11n": "heavy-rain",
+      "13d": "snowy", "13n": "snowy",
+      "50d": "foggy", "50n": "foggy"
+    };
+    return iconMap[iconCode] || "sunny";
+  };
+
+  const getWeatherIconComponent = (condition: string) => {
     switch (condition) {
       case "sunny":
         return <Sun className="w-8 h-8 text-yellow-500" />;
@@ -67,21 +83,129 @@ const Weather = () => {
       case "rainy":
       case "heavy-rain":
         return <CloudRain className="w-8 h-8 text-blue-500" />;
+      case "snowy":
+        return <Cloud className="w-8 h-8 text-blue-300" />;
+      case "foggy":
+        return <Cloud className="w-8 h-8 text-gray-400" />;
       default:
         return <Sun className="w-8 h-8 text-yellow-500" />;
     }
   };
 
-  // Simulate weather updates every 30 seconds
+  // Fetch current weather data
+  const fetchCurrentWeather = async () => {
+    if (API_KEY === "YOUR_API_KEY_HERE") {
+      setError("Please add your OpenWeatherMap API key to environment variables");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&units=metric`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Weather API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      setCurrentWeather({
+        location: `${data.name}, ${data.sys.country}`,
+        temperature: Math.round(data.main.temp),
+        condition: data.weather[0].main,
+        humidity: data.main.humidity,
+        windSpeed: Math.round(data.wind.speed * 3.6), // Convert m/s to km/h
+        visibility: Math.round(data.visibility / 1000), // Convert m to km
+        icon: getWeatherIcon(data.weather[0].icon),
+        feelsLike: Math.round(data.main.feels_like),
+        pressure: data.main.pressure
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch weather data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch 7-day forecast
+  const fetchForecast = async () => {
+    if (API_KEY === "YOUR_API_KEY_HERE") {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${CITY}&appid=${API_KEY}&units=metric`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Forecast API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const dailyForecasts: { [key: string]: any } = {};
+
+      // Group forecasts by date
+      data.list.forEach((item: any) => {
+        const date = item.dt_txt.split(' ')[0];
+        if (!dailyForecasts[date]) {
+          dailyForecasts[date] = {
+            temps: [],
+            humidity: [],
+            conditions: [],
+            icons: []
+          };
+        }
+        dailyForecasts[date].temps.push(item.main.temp);
+        dailyForecasts[date].humidity.push(item.main.humidity);
+        dailyForecasts[date].conditions.push(item.weather[0].main);
+        dailyForecasts[date].icons.push(item.weather[0].icon);
+      });
+
+      // Convert to our format
+      const forecastData: ForecastDay[] = Object.entries(dailyForecasts).slice(0, 7).map(([date, data], index) => {
+        const dayNames = ['Today', 'Tomorrow', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const avgTemp = data.temps.reduce((a: number, b: number) => a + b, 0) / data.temps.length;
+        const maxTemp = Math.max(...data.temps);
+        const minTemp = Math.min(...data.temps);
+        const avgHumidity = Math.round(data.humidity.reduce((a: number, b: number) => a + b, 0) / data.humidity.length);
+        const mostCommonCondition = data.conditions[Math.floor(data.conditions.length / 2)];
+        const mostCommonIcon = data.icons[Math.floor(data.icons.length / 2)];
+
+        return {
+          day: dayNames[index] || new Date(date).toLocaleDateString('en-US', { weekday: 'long' }),
+          high: Math.round(maxTemp),
+          low: Math.round(minTemp),
+          condition: mostCommonCondition,
+          icon: getWeatherIcon(mostCommonIcon),
+          humidity: avgHumidity,
+          date,
+          description: data.conditions[Math.floor(data.conditions.length / 2)]
+        };
+      });
+
+      setForecast(forecastData);
+    } catch (err) {
+      console.error("Forecast fetch error:", err);
+    }
+  };
+
+  // Fetch weather data on component mount
+  useEffect(() => {
+    fetchCurrentWeather();
+    fetchForecast();
+  }, []);
+
+  // Refresh data every 10 minutes
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentWeather(prev => ({
-        ...prev,
-        temperature: prev.temperature + (Math.random() - 0.5) * 2,
-        humidity: Math.max(60, Math.min(90, prev.humidity + (Math.random() - 0.5) * 5)),
-        windSpeed: Math.max(5, Math.min(20, prev.windSpeed + (Math.random() - 0.5) * 3))
-      }));
-    }, 30000);
+      fetchCurrentWeather();
+      fetchForecast();
+    }, 600000); // 10 minutes
 
     return () => clearInterval(interval);
   }, []);
@@ -97,6 +221,12 @@ const Weather = () => {
           <p className="text-lg text-muted-foreground">
             Real-time weather data and forecasts for Odisha's agricultural regions
           </p>
+          {error && (
+            <Alert className="mt-4 border-destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
         </div>
 
         {/* Weather Alerts */}
@@ -126,10 +256,13 @@ const Weather = () => {
                 {/* Temperature */}
                 <div className="text-center">
                   <div className="flex items-center justify-center mb-2">
-                    {getWeatherIcon(currentWeather.icon)}
+                    {getWeatherIconComponent(currentWeather.icon)}
                   </div>
                   <div className="text-4xl font-bold text-foreground">{Math.round(currentWeather.temperature)}°C</div>
                   <div className="text-sm text-muted-foreground">{currentWeather.condition}</div>
+                  {currentWeather.feelsLike && (
+                    <div className="text-xs text-muted-foreground">Feels like {currentWeather.feelsLike}°C</div>
+                  )}
                 </div>
 
                 {/* Humidity */}
@@ -166,25 +299,31 @@ const Weather = () => {
         {/* 7-Day Forecast */}
         <div>
           <h2 className="text-2xl font-semibold text-foreground mb-6">7-Day Forecast</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
-            {forecast.map((day, index) => (
-              <Card key={index} className="text-center shadow-soft hover:shadow-strong transition-all duration-300">
-                <CardContent className="p-4">
-                  <div className="font-semibold text-foreground mb-2">{day.day}</div>
-                  <div className="flex justify-center mb-3">
-                    {getWeatherIcon(day.icon)}
-                  </div>
-                  <div className="text-sm font-medium text-foreground mb-1">
-                    {day.high}° / {day.low}°
-                  </div>
-                  <div className="text-xs text-muted-foreground mb-2">{day.condition}</div>
-                  <div className="text-xs text-blue-600">
-                    💧 {day.humidity}%
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="text-muted-foreground">Loading forecast...</div>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+              {forecast.map((day, index) => (
+                <Card key={index} className="text-center shadow-soft hover:shadow-strong transition-all duration-300">
+                  <CardContent className="p-4">
+                    <div className="font-semibold text-foreground mb-2">{day.day}</div>
+                    <div className="flex justify-center mb-3">
+                      {getWeatherIconComponent(day.icon)}
+                    </div>
+                    <div className="text-sm font-medium text-foreground mb-1">
+                      {day.high}° / {day.low}°
+                    </div>
+                    <div className="text-xs text-muted-foreground mb-2">{day.condition}</div>
+                    <div className="text-xs text-blue-600">
+                      💧 {day.humidity}%
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Farming Recommendations */}
