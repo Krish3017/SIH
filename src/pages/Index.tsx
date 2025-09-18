@@ -1,11 +1,23 @@
 import { ArrowRight, Leaf, TrendingUp, Users, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import heroImage from "@/assets/hero-farming.jpg";
 import smartFarmingImage from "@/assets/smart-farming.jpg";
 
 const Index = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handleProtectedAction = (path: string) => {
+    if (isAuthenticated) {
+      navigate(path);
+    } else {
+      navigate('/signin', { state: { from: { pathname: path } } });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -26,10 +38,12 @@ const Index = () => {
             Helping Farmers in Odisha with Smart Agriculture Solutions
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild variant="hero" size="lg">
-              <Link to="/dashboard">
-                Try Now <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
+            <Button 
+              variant="hero" 
+              size="lg"
+              onClick={() => handleProtectedAction('/dashboard')}
+            >
+              Try Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button asChild variant="outline" size="lg" className="bg-white text-black hover:bg-yellow-400 border border-yellow-400 transition-colors duration-300">
               <Link to="/features">Learn More</Link>
@@ -178,9 +192,13 @@ const Index = () => {
           <p className="text-xl mb-8 opacity-90">
             Join thousands of farmers in Odisha who are already using AgriAI to grow smarter
           </p>
-          <Button asChild variant="outline" size="lg" className="bg-white text-green-600 border border-green-600 hover:bg-yellow-400 hover:text-white transition-colors duration-300"
+          <Button 
+            variant="outline" 
+            size="lg" 
+            className="bg-white text-green-600 border border-green-600 hover:bg-yellow-400 hover:text-white transition-colors duration-300"
+            onClick={() => handleProtectedAction('/dashboard')}
           >
-            <Link to="/dashboard">Get Started Today</Link>
+            Get Started Today
           </Button>
         </div>
       </section>

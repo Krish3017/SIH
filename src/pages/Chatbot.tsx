@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Send, Bot, User } from "lucide-react";
+import { Send, Bot, User, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import chatbotAvatar from "@/assets/chatbot-avatar.jpg";
 
 interface Message {
@@ -13,6 +15,9 @@ interface Message {
 }
 
 const Chatbot = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -35,6 +40,11 @@ const Chatbot = () => {
 
   const sendMessage = () => {
     if (!inputMessage.trim()) return;
+    
+    if (!isAuthenticated) {
+      navigate('/signin', { state: { from: { pathname: '/chatbot' } } });
+      return;
+    }
 
     // Add user message
     const userMessage: Message = {
@@ -133,7 +143,13 @@ const Chatbot = () => {
             <div className="flex gap-2">
               <Input
                 value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
+                onChange={(e) => {
+                  if (!isAuthenticated) {
+                    navigate('/signin', { state: { from: { pathname: '/chatbot' } } });
+                    return;
+                  }
+                  setInputMessage(e.target.value);
+                }}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your farming question here... (English or Odia)"
                 className="flex-1"
@@ -161,7 +177,13 @@ const Chatbot = () => {
                 key={index}
                 variant="outline"
                 className="text-left justify-start h-auto p-3"
-                onClick={() => setInputMessage(question)}
+                onClick={() => {
+                  if (isAuthenticated) {
+                    setInputMessage(question);
+                  } else {
+                    navigate('/signin', { state: { from: { pathname: '/chatbot' } } });
+                  }
+                }}
               >
                 {question}
               </Button>

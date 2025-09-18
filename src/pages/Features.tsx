@@ -1,9 +1,21 @@
 import { MessageCircle, TrendingUp, Cloud, AlertTriangle, DollarSign, Droplets, Leaf, BarChart3 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Features = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handleProtectedAction = (path: string) => {
+    if (isAuthenticated) {
+      navigate(path);
+    } else {
+      navigate('/signin', { state: { from: { pathname: path } } });
+    }
+  };
+
   const features = [
     {
       icon: MessageCircle,
@@ -91,8 +103,12 @@ const Features = () => {
                 <p className="text-muted-foreground mb-6 leading-relaxed">
                   {feature.description}
                 </p>
-                <Button asChild variant="outline" className="w-full">
-                  <Link to={feature.link}>Try Feature</Link>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => handleProtectedAction(feature.link)}
+                >
+                  Try Feature
                 </Button>
               </CardContent>
             </Card>
@@ -109,8 +125,12 @@ const Features = () => {
             benefiting from our AI-powered farming solutions.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild variant="hero" size="lg">
-              <Link to="/dashboard">Get Started</Link>
+            <Button 
+              variant="hero" 
+              size="lg"
+              onClick={() => handleProtectedAction('/dashboard')}
+            >
+              Get Started
             </Button>
             <Button asChild variant="outline" size="lg">
               <Link to="/contact">Contact Support</Link>

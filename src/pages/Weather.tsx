@@ -42,7 +42,7 @@ const Weather = () => {
   const [error, setError] = useState<string | null>(null);
 
   // OpenWeatherMap API configuration
-  const API_KEY = process.env.REACT_APP_OPENWEATHER_API_KEY || "YOUR_API_KEY_HERE";
+  const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || "YOUR_API_KEY_HERE";
   const CITY = "Bhubaneswar,IN"; // Odisha, India
 
   const [alerts] = useState([

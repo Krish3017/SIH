@@ -50,10 +50,11 @@ export function NavBar({ items, className }: NavBarProps) {
       )}
     >
       {/* Colors adjusted to match existing navbar: bg-card/95, border-border, backdrop blur, shadow-soft */}
-      <div className="flex items-center gap-3 bg-card/95 border border-border backdrop-blur-sm py-1 px-1 rounded-full shadow-soft">
+      <div className="flex items-center gap-1 bg-card/95 border border-border backdrop-blur-sm py-1 px-2 rounded-full shadow-soft min-w-fit">
         {items.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.name;
+          const isSignIn = item.name === "Sign In";
 
           return (
             <Link
@@ -61,15 +62,19 @@ export function NavBar({ items, className }: NavBarProps) {
               to={item.url}
               onClick={() => setActiveTab(item.name)}
               className={cn(
-                "relative cursor-pointer text-sm font-semibold px-6 py-2 rounded-full transition-colors",
+                "relative cursor-pointer text-sm font-semibold rounded-full transition-colors flex items-center justify-center",
                 // Match current theme tokens
                 "text-muted-foreground hover:text-foreground hover:bg-muted",
                 isActive && "bg-primary text-primary-foreground",
+                // Different padding for Sign In button
+                isSignIn ? "px-4 py-2 min-w-[80px]" : "px-4 py-2 min-w-[70px]",
+                // Responsive sizing
+                "text-xs sm:text-sm"
               )}
             >
-              <span className="hidden md:inline">{item.name}</span>
-              <span className="md:hidden">
-                <Icon size={18} strokeWidth={2.5} />
+              <span className="hidden sm:inline whitespace-nowrap">{item.name}</span>
+              <span className="sm:hidden">
+                <Icon size={16} strokeWidth={2.5} />
               </span>
               {isActive && (
                 <motion.div

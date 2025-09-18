@@ -4,11 +4,14 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  
   // Mock data for the dashboard
   const farmerData = {
-    name: "Ramesh Kumar",
+    name: user?.fullName || "Farmer",
     location: "Cuttack, Odisha",
     totalFields: 3,
     totalArea: "5.2 hectares"

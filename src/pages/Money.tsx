@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Plus, Trash2, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import { Plus, Trash2, TrendingUp, TrendingDown, DollarSign, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface Transaction {
   id: number;
@@ -17,6 +19,9 @@ interface Transaction {
 }
 
 const Money = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  
   const [transactions, setTransactions] = useState<Transaction[]>([
     { id: 1, type: "income", category: "Rice Sales", amount: 25000, description: "Sold 100 kg rice", date: "2024-09-15" },
     { id: 2, type: "expense", category: "Seeds", amount: 3000, description: "Paddy seeds purchase", date: "2024-09-10" },
@@ -37,6 +42,11 @@ const Money = () => {
   const expenseCategories = ["Seeds", "Fertilizer", "Pesticide", "Irrigation", "Equipment", "Labor", "Transportation", "Other Expense"];
 
   const addTransaction = () => {
+    if (!isAuthenticated) {
+      navigate('/signin', { state: { from: { pathname: '/money' } } });
+      return;
+    }
+    
     if (!formData.category || !formData.amount || !formData.description) return;
 
     const newTransaction: Transaction = {
@@ -59,6 +69,10 @@ const Money = () => {
   };
 
   const deleteTransaction = (id: number) => {
+    if (!isAuthenticated) {
+      navigate('/signin', { state: { from: { pathname: '/money' } } });
+      return;
+    }
     setTransactions(transactions.filter(t => t.id !== id));
   };
 
@@ -140,9 +154,13 @@ const Money = () => {
                 <Label htmlFor="type">Transaction Type</Label>
                 <Select
                   value={formData.type}
-                  onValueChange={(value: "income" | "expense") => 
-                    setFormData({ ...formData, type: value, category: "" })
-                  }
+                  onValueChange={(value: "income" | "expense") => {
+                    if (!isAuthenticated) {
+                      navigate('/signin', { state: { from: { pathname: '/money' } } });
+                      return;
+                    }
+                    setFormData({ ...formData, type: value, category: "" });
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -158,7 +176,13 @@ const Money = () => {
                 <Label htmlFor="category">Category</Label>
                 <Select
                   value={formData.category}
-                  onValueChange={(value) => setFormData({ ...formData, category: value })}
+                  onValueChange={(value) => {
+                    if (!isAuthenticated) {
+                      navigate('/signin', { state: { from: { pathname: '/money' } } });
+                      return;
+                    }
+                    setFormData({ ...formData, category: value });
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
@@ -180,7 +204,13 @@ const Money = () => {
                   type="number"
                   placeholder="0"
                   value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                  onChange={(e) => {
+                    if (!isAuthenticated) {
+                      navigate('/signin', { state: { from: { pathname: '/money' } } });
+                      return;
+                    }
+                    setFormData({ ...formData, amount: e.target.value });
+                  }}
                 />
               </div>
 
@@ -190,7 +220,13 @@ const Money = () => {
                   id="description"
                   placeholder="Enter description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) => {
+                    if (!isAuthenticated) {
+                      navigate('/signin', { state: { from: { pathname: '/money' } } });
+                      return;
+                    }
+                    setFormData({ ...formData, description: e.target.value });
+                  }}
                 />
               </div>
 
@@ -200,7 +236,13 @@ const Money = () => {
                   id="date"
                   type="date"
                   value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  onChange={(e) => {
+                    if (!isAuthenticated) {
+                      navigate('/signin', { state: { from: { pathname: '/money' } } });
+                      return;
+                    }
+                    setFormData({ ...formData, date: e.target.value });
+                  }}
                 />
               </div>
 
