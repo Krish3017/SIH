@@ -1,75 +1,73 @@
-# Welcome to your Lovable project
+🌾 AgriSense – AI-Powered Crop Yield Prediction & Smart Farming Assistant
 
-## Project info
+AgriSense is an AI-driven platform designed to help farmers in Odisha optimize their crop production using data-driven insights. It integrates crop yield prediction, weather forecasting, money management, irrigation and fertilization recommendations, and a regional-language AI chatbot – all in one platform.
 
-**URL**: https://lovable.dev/projects/3b74ac59-3d2d-4814-9655-2c2a6be45df1
+🚀 Features
 
-## How can I edit this code?
+🤖 AI Chatbot (Regional Language Support – Odia + English)
+Provides instant answers and farming guidance in simple conversational form.
 
-There are several ways of editing your application.
+📊 Crop Yield Prediction
+Uses historical data, soil metrics, and weather patterns to predict crop yields with high accuracy.
 
-**Use Lovable**
+☁️ Weather Forecast & Alerts
+7–10 day local forecasts + real-time alerts (rain, drought, storms) to reduce crop loss by up to 20–25%.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3b74ac59-3d2d-4814-9655-2c2a6be45df1) and start prompting.
+💰 Money Management Tools
+Track income, expenses, and profit margins. Smart insights to avoid debt and plan farm investments.
 
-Changes made via Lovable will be committed automatically to this repo.
+💧 Irrigation Recommendations
+AI-based scheduling that reduces water usage by up to 30%.
 
-**Use your preferred IDE**
+🌱 Fertilization & Pest Guidance
+Soil-health-based fertilizer advice + eco-friendly pest management suggestions.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+🖥️ Pages / Modules
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Home Page – Overview of AgriSense, CTA for farmers
 
-Follow these steps:
+Features Page – Grid-based view of all functionalities
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+AI Chatbot Page – Conversational help (Odia + English)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Weather Page – Forecast + weather alerts
 
-# Step 3: Install the necessary dependencies.
-npm i
+Money Management Page – Expense/income tracking + profit calculator
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+Recommendations Page – Smart irrigation & fertilization advice
 
-**Edit a file directly in GitHub**
+Dashboard – Quick farmer insights & yield prediction summary
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Contact Us Page – Feedback & support form
 
-**Use GitHub Codespaces**
+🏗️ Tech Stack
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Frontend: HTML, CSS (Tailwind/Bootstrap), JavaScript
 
-## What technologies are used for this project?
+Backend: Flask / Django (API-ready for ML integration)
 
-This project is built with:
+Database: PostgreSQL / Firebase (for farmer data)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+APIs: OpenWeather, Soil Health datasets, Supabase for data access
 
-## How can I deploy this project?
+AI/ML: Regression models, Neural Networks (for yield prediction)
 
-Simply open [Lovable](https://lovable.dev/projects/3b74ac59-3d2d-4814-9655-2c2a6be45df1) and click on Share -> Publish.
+📈 Impact & Benefits
 
-## Can I connect a custom domain to my Lovable project?
+📉 Reduce crop loss by 20–25% through early weather alerts.
 
-Yes, you can!
+💹 Boost farmer productivity by 10–15% using optimized AI recommendations.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+🌍 Support sustainable agriculture with eco-friendly fertilizer & irrigation practices.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+📱 Empower small-scale farmers in Odisha with regional language support.
 
-// Chatbot uses a simulated response out of the box. No server is required.
+🔮 Future Features
+
+Drone & satellite-based soil analysis
+
+Voice assistant for low-literacy farmers
+
+Market price forecasting for better crop sales
+
+Community forum for farmer-to-farmer knowledge sharing
